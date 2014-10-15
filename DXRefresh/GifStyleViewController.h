@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NormalStyleViewController.h"
 
-@interface GifStyleViewController : UIViewController
+@interface GifStyleViewController : NormalStyleViewController
+
+
 
 @end

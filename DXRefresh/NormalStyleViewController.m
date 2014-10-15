@@ -14,8 +14,6 @@
     int _idx;
 }
 
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) NSMutableArray *images;
 
 @end
 
@@ -25,6 +23,7 @@
 {
     [super viewDidLoad];
     
+    self.title = @"TableView";
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
@@ -40,6 +39,7 @@
     
     [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader)];
     [self.tableView addFooterWithTarget:self action:@selector(refreshFooter)];
+    
 }
 
 - (void)updateSomeThing
@@ -68,8 +68,8 @@
 {
     [self updateSomeThing];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.tableView headerEndRefreshing];
         [self.tableView reloadData];
+        [self.tableView headerEndRefreshing];
     });
 }
 
@@ -77,12 +77,8 @@
 {
     [self updateSomeThing];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.tableView footerEndRefreshing];
         [self.tableView reloadData];
-        
-        if (self.images.count > 100) {
-            [self.tableView removeFooter];
-        }
+        [self.tableView footerEndRefreshing];
     });
 }
 

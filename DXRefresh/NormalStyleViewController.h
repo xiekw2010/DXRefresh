@@ -10,4 +10,11 @@
 
 @interface NormalStyleViewController : UIViewController
 
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) NSMutableArray *images;
+
+- (void)refreshHeader;
+- (void)refreshFooter;
+- (void)updateSomeThing;
+
 @end

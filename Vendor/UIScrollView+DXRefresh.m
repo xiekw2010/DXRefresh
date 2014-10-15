@@ -108,13 +108,10 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    // 不能跟用户交互，直接返回
     if (!self.userInteractionEnabled || self.alpha <= 0.01 || self.hidden) return;
     if ([@"contentSize" isEqualToString:keyPath]) {
-        
         [self adjustFrameWithContentSize];
     } else if ([@"contentOffset" isEqualToString:keyPath]) {
-        
         if (self.scrollView.contentOffset.y <= 0) {
             return;
         }
@@ -175,6 +172,7 @@ static char DXRefreshFooterViewKey;
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
     [refresh addTarget:target action:action forControlEvents:UIControlEventValueChanged];
     [self addSubview:refresh];
+    self.alwaysBounceVertical = YES;
     self.header = (UIControl<DXRefreshView> *)refresh;
 }
 
