@@ -17,6 +17,10 @@
 - (void)addFooterWithTarget:(id)target action:(SEL)action;
 - (void)footerBeginRefreshing;
 - (void)footerEndRefreshing;
+
+// if scroll==YES, self will scroll to bottom to refresh animated.
+- (void)footerBeginRefreshingScrollToFooter:(BOOL)scroll;
+// Some times there are no data available, then we remove it.
 - (void)removeFooter;
 
 @end

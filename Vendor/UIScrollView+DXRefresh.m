@@ -61,7 +61,7 @@
         [self.acv stopAnimating];
         
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            self.scrollView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0, 0.0f);
+            self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, 0, 0.0f);
         } completion:^(BOOL finished) {
         }];
     });
@@ -120,8 +120,8 @@
             
             [self beginRefreshing];
             
-            [UIView animateWithDuration:0.2 delay:0.2 options:UIViewAnimationOptionCurveEaseIn animations:^{
-                self.scrollView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, [DXRfreshFooter standHeight], 0.0f);
+            [UIView animateWithDuration:0.2 delay:0.01 options:UIViewAnimationOptionCurveEaseIn animations:^{
+                self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, [DXRfreshFooter standHeight], 0.0f);
             } completion:^(BOOL finished) {
                 
             }];
@@ -210,16 +210,24 @@ static char DXRefreshFooterViewKey;
 
 - (void)footerBeginRefreshing
 {
+    [self footerBeginRefreshingScrollToFooter:NO];
+}
+
+- (void)footerBeginRefreshingScrollToFooter:(BOOL)scroll
+{
     if (!self.footer) {
         return;
     }
     
-    CGFloat upOffset = self.contentSize.height - CGRectGetHeight(self.bounds);
-    upOffset = MAX(0, upOffset);
-    [self setContentOffset:CGPointMake(0, upOffset + [DXRfreshFooter standTriggerHeight]) animated:YES];
-
+    if (scroll) {
+        CGFloat upOffset = self.contentSize.height - CGRectGetHeight(self.bounds);
+        upOffset = MAX(0, upOffset);
+        [self setContentOffset:CGPointMake(0, upOffset + [DXRfreshFooter standTriggerHeight]) animated:YES];
+    }
+    
     [self.footer beginRefreshing];
 }
+
 
 - (void)footerEndRefreshing
 {
