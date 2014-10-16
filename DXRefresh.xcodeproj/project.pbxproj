@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BE6DA0B919EE80AF0021471E /* UIScrollView+DXRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6DA0B819EE80AF0021471E /* UIScrollView+DXRefresh.m */; };
+		BE6DA0CB19EFB45D0021471E /* UIScrollView+DXRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6DA0CA19EFB45D0021471E /* UIScrollView+DXRefresh.m */; };
 		BE7E3C6019E91A4200944DCA /* NormalStyleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE7E3C5F19E91A4200944DCA /* NormalStyleViewController.m */; };
 		BE7E3C6319E91A5600944DCA /* GifStyleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE7E3C6219E91A5600944DCA /* GifStyleViewController.m */; };
 		BE9457B219E9160700E078E7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9457B119E9160700E078E7 /* Foundation.framework */; };
@@ -20,8 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BE6DA0B719EE80AF0021471E /* UIScrollView+DXRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DXRefresh.h"; sourceTree = "<group>"; };
-		BE6DA0B819EE80AF0021471E /* UIScrollView+DXRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DXRefresh.m"; sourceTree = "<group>"; };
+		BE6DA0C919EFB45D0021471E /* UIScrollView+DXRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DXRefresh.h"; sourceTree = "<group>"; };
+		BE6DA0CA19EFB45D0021471E /* UIScrollView+DXRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DXRefresh.m"; sourceTree = "<group>"; };
 		BE7E3C5E19E91A4200944DCA /* NormalStyleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalStyleViewController.h; sourceTree = "<group>"; };
 		BE7E3C5F19E91A4200944DCA /* NormalStyleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalStyleViewController.m; sourceTree = "<group>"; };
 		BE7E3C6119E91A5600944DCA /* GifStyleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GifStyleViewController.h; sourceTree = "<group>"; };
@@ -54,11 +54,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BE6DA0B619EE80A80021471E /* Vendor */ = {
+		BE6DA0C519EFB4500021471E /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				BE6DA0B719EE80AF0021471E /* UIScrollView+DXRefresh.h */,
-				BE6DA0B819EE80AF0021471E /* UIScrollView+DXRefresh.m */,
+				BE6DA0C919EFB45D0021471E /* UIScrollView+DXRefresh.h */,
+				BE6DA0CA19EFB45D0021471E /* UIScrollView+DXRefresh.m */,
 			);
 			path = Vendor;
 			sourceTree = "<group>";
@@ -66,7 +66,7 @@
 		BE9457A519E9160700E078E7 = {
 			isa = PBXGroup;
 			children = (
-				BE6DA0B619EE80A80021471E /* Vendor */,
+				BE6DA0C519EFB4500021471E /* Vendor */,
 				BE9457B719E9160700E078E7 /* DXRefresh */,
 				BE9457B019E9160700E078E7 /* Frameworks */,
 				BE9457AF19E9160700E078E7 /* Products */,
@@ -186,7 +186,7 @@
 				BE7E3C6319E91A5600944DCA /* GifStyleViewController.m in Sources */,
 				BE9457BE19E9160700E078E7 /* main.m in Sources */,
 				BE7E3C6019E91A4200944DCA /* NormalStyleViewController.m in Sources */,
-				BE6DA0B919EE80AF0021471E /* UIScrollView+DXRefresh.m in Sources */,
+				BE6DA0CB19EFB45D0021471E /* UIScrollView+DXRefresh.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

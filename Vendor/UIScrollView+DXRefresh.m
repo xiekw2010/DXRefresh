@@ -22,7 +22,7 @@
 @interface DXRfreshFooter : UIControl<DXRefreshView>
 
 @property (nonatomic, strong) UIActivityIndicatorView *acv;
-@property (nonatomic, weak) UIScrollView *scrollView;
+@property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, assign) BOOL refreshing;
 
 
@@ -36,6 +36,13 @@
 @end
 
 @implementation DXRfreshFooter
+
+- (void)dealloc
+{
+    [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:nil];
+    [self.scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    self.scrollView = nil;
+}
 
 + (CGFloat)standHeight
 {
@@ -56,7 +63,7 @@
 - (void)endRefreshing
 {
     //wierd handle way, otherwise it will flash the table view when reloaddata
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.refreshing = NO;
         [self.acv stopAnimating];
         
