@@ -46,6 +46,8 @@
     
     [self.collectionView addHeaderWithTarget:self action:@selector(refreshHeader)];
     [self.collectionView addFooterWithTarget:self action:@selector(refreshFooter)];
+    
+
 }
 
 - (void)handUpdateH

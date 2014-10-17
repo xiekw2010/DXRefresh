@@ -24,7 +24,7 @@
     [super viewDidLoad];
     
     self.title = @"TableView";
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+//    self.edgesForExtendedLayout = UIRectEdgeNone;
     
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -39,6 +39,7 @@
     
     [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader)];
     [self.tableView addFooterWithTarget:self action:@selector(refreshFooter)];
+    [self updateSomeThing];
     
 }
 
@@ -99,7 +100,11 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
     }
+    cell.backgroundColor = [UIColor whiteColor];
     cell.textLabel.text = self.images[indexPath.row];
+    if (indexPath.row % 2 == 0) {
+        cell.backgroundColor = [UIColor cyanColor];
+    }
     return cell;
 }
 

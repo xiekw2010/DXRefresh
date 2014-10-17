@@ -16,6 +16,9 @@
 @required
 - (void)beginRefreshing;
 - (void)endRefreshing;
+@optional
++ (CGFloat)standHeight;
++ (CGFloat)standTriggerHeight;
 
 @end
 
@@ -68,7 +71,7 @@
         [self.acv stopAnimating];
         
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, 0, 0.0f);
+            self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, self.scrollView.contentInset.bottom - [DXRfreshFooter standHeight], 0.0f);
         } completion:^(BOOL finished) {
         }];
     });
@@ -89,7 +92,6 @@
 {
     [super willMoveToSuperview:newSuperview];
     
-    [self endRefreshing];
     [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:nil];
     [self.scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
 
@@ -123,12 +125,12 @@
             return;
         }
         
-        if (self.scrollView.contentOffset.y+(self.scrollView.frame.size.height) > self.scrollView.contentSize.height+[DXRfreshFooter standTriggerHeight]  && !self.refreshing) {
+        if (self.scrollView.contentOffset.y+(self.scrollView.frame.size.height) > self.scrollView.contentSize.height+[DXRfreshFooter standTriggerHeight] + self.scrollView.contentInset.bottom && !self.refreshing) {
             
             [self beginRefreshing];
             
             [UIView animateWithDuration:0.2 delay:0.01 options:UIViewAnimationOptionCurveEaseIn animations:^{
-                self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, [DXRfreshFooter standHeight], 0.0f);
+                self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, self.scrollView.contentInset.bottom + [DXRfreshFooter standHeight], 0.0f);
             } completion:^(BOOL finished) {
                 
             }];
@@ -183,14 +185,13 @@ static char DXRefreshFooterViewKey;
     self.header = (UIControl<DXRefreshView> *)refresh;
 }
 
+static CGFloat const _kRefreshControlHeight = -64.0;
+
 - (void)headerBeginRefreshing
 {
     if ([self.header isKindOfClass:[UIRefreshControl class]]) {
         UIRefreshControl *refresh = (UIRefreshControl *)self.header;
-        CGFloat contentOffsetY = - 64.0;
-        if (self.contentOffset.y < 0) {
-            contentOffsetY = -124.0f;
-        }
+        CGFloat contentOffsetY = _kRefreshControlHeight - self.contentInset.top;
         [self setContentOffset:CGPointMake(0, contentOffsetY) animated:YES];
         [refresh beginRefreshing];
     }
