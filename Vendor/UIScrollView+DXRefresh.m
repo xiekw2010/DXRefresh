@@ -42,8 +42,14 @@
 
 - (void)dealloc
 {
-    [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:nil];
-    [self.scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    @try {
+        [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:nil];
+        [self.scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    }
+    @catch (NSException *exception) {
+    }
+    @finally {
+    }
     self.scrollView = nil;
 }
 
@@ -71,7 +77,7 @@
         [self.acv stopAnimating];
         
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, self.scrollView.contentInset.bottom - [DXRfreshFooter standHeight], 0.0f);
+            self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, MAX(0, self.scrollView.contentInset.bottom - [DXRfreshFooter standHeight]), 0.0f);
         } completion:^(BOOL finished) {
         }];
     });
@@ -94,12 +100,12 @@
     
     [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:nil];
     [self.scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
-
+    
     
     if (newSuperview && [newSuperview isKindOfClass:[UIScrollView class]]) {
         [newSuperview addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionNew context:nil];
         [newSuperview addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
-
+        
         self.scrollView = (UIScrollView *)newSuperview;
         [self adjustFrameWithContentSize];
     }
@@ -174,8 +180,7 @@ static char DXRefreshFooterViewKey;
 - (void)addHeaderWithTarget:(id)target action:(SEL)action
 {
     if (self.header) {
-        [self.header removeFromSuperview];
-        self.header = nil;
+        return;
     }
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
@@ -208,8 +213,7 @@ static CGFloat const _kRefreshControlHeight = -64.0;
 - (void)addFooterWithTarget:(id)target action:(SEL)action
 {
     if (self.footer) {
-        [self.footer removeFromSuperview];
-        self.footer = nil;
+        return;
     }
     self.footer = [[DXRfreshFooter alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), [DXRfreshFooter standHeight])];
     [self.footer addTarget:target action:action forControlEvents:UIControlEventValueChanged];
