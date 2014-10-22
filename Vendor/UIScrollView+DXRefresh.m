@@ -16,6 +16,7 @@
 @required
 - (void)beginRefreshing;
 - (void)endRefreshing;
+- (BOOL)isRefreshing;
 @optional
 + (CGFloat)standHeight;
 + (CGFloat)standTriggerHeight;
@@ -31,7 +32,7 @@
 
 - (void)beginRefreshing;
 - (void)endRefreshing;
-
+- (BOOL)isRefreshing;
 
 + (CGFloat)standHeight;
 + (CGFloat)standTriggerHeight;
@@ -49,8 +50,8 @@
     @catch (NSException *exception) {
     }
     @finally {
+        self.scrollView = nil;
     }
-    self.scrollView = nil;
 }
 
 + (CGFloat)standHeight
@@ -69,6 +70,11 @@
     [self.acv startAnimating];
 }
 
+- (BOOL)isRefreshing
+{
+    return self.acv.isAnimating;
+}
+
 - (void)endRefreshing
 {
     //wierd handle way, otherwise it will flash the table view when reloaddata
@@ -76,8 +82,10 @@
         self.refreshing = NO;
         [self.acv stopAnimating];
         
-        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, MAX(0, self.scrollView.contentInset.bottom - [DXRfreshFooter standHeight]), 0.0f);
+        [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+            if (self.scrollView.superview && self.scrollView) {
+                self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, MAX(0, self.scrollView.contentInset.bottom - [DXRfreshFooter standHeight]), 0.0f);
+            }
         } completion:^(BOOL finished) {
         }];
     });
@@ -210,6 +218,15 @@ static CGFloat const _kRefreshControlHeight = -64.0;
     }
 }
 
+- (BOOL)isHeaderRefreshing
+{
+    if ([self.header isKindOfClass:[UIRefreshControl class]]) {
+        UIRefreshControl *refresh = (UIRefreshControl *)self.header;
+        return refresh.isRefreshing;
+    }
+    return NO;
+}
+
 - (void)addFooterWithTarget:(id)target action:(SEL)action
 {
     if (self.footer) {
@@ -244,6 +261,11 @@ static CGFloat const _kRefreshControlHeight = -64.0;
 - (void)footerEndRefreshing
 {
     [self.footer endRefreshing];
+}
+
+- (BOOL)isFooterRefreshing
+{
+    return self.footer.isRefreshing;
 }
 
 - (void)removeFooter
