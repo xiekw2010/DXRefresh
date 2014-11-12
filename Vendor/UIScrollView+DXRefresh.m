@@ -26,9 +26,8 @@
 @interface DXRfreshFooter : UIControl<DXRefreshView>
 
 @property (nonatomic, strong) UIActivityIndicatorView *acv;
-@property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, assign) BOOL refreshing;
-
+@property (nonatomic, assign) BOOL observed;
 
 - (void)beginRefreshing;
 - (void)endRefreshing;
@@ -43,14 +42,10 @@
 
 - (void)dealloc
 {
-    @try {
-        [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:nil];
-        [self.scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
-    }
-    @catch (NSException *exception) {
-    }
-    @finally {
-        self.scrollView = nil;
+    if (self.observed) {
+        [self.superview removeObserver:self forKeyPath:@"contentSize" context:nil];
+        [self.superview removeObserver:self forKeyPath:@"contentOffset" context:nil];
+        self.observed = NO;
     }
 }
 
@@ -78,13 +73,16 @@
 - (void)endRefreshing
 {
     //wierd handle way, otherwise it will flash the table view when reloaddata
+    
+    __weak typeof(self)wself = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.refreshing = NO;
-        [self.acv stopAnimating];
+        wself.refreshing = NO;
+        [wself.acv stopAnimating];
         
         [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            if (self.scrollView.superview && self.scrollView) {
-                self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, MAX(0, self.scrollView.contentInset.bottom - [DXRfreshFooter standHeight]), 0.0f);
+            if (wself.superview) {
+                UIScrollView *scrollView = (UIScrollView *)wself.superview;
+                scrollView.contentInset = UIEdgeInsetsMake(scrollView.contentInset.top, 0.0f, MAX(0, scrollView.contentInset.bottom - [DXRfreshFooter standHeight]), 0.0f);
             }
         } completion:^(BOOL finished) {
         }];
@@ -106,23 +104,27 @@
 {
     [super willMoveToSuperview:newSuperview];
     
-    [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:nil];
-    [self.scrollView removeObserver:self forKeyPath:@"contentOffset" context:nil];
+    if (self.observed) {
+        [self.superview removeObserver:self forKeyPath:@"contentSize" context:nil];
+        [self.superview removeObserver:self forKeyPath:@"contentOffset" context:nil];
+        self.observed = NO;
+    }
     
     
     if (newSuperview && [newSuperview isKindOfClass:[UIScrollView class]]) {
         [newSuperview addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionNew context:nil];
         [newSuperview addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
-        
-        self.scrollView = (UIScrollView *)newSuperview;
+        self.observed = YES;
         [self adjustFrameWithContentSize];
     }
 }
 
 - (void)adjustFrameWithContentSize
 {
-    CGFloat contentHeight = self.scrollView.contentSize.height;
-    CGFloat scrollHeight = self.scrollView.frame.size.height - self.scrollView.contentInset.top - self.scrollView.contentInset.bottom;
+    UIScrollView *scrollView = (UIScrollView *)self.superview;
+    
+    CGFloat contentHeight = scrollView.contentSize.height;
+    CGFloat scrollHeight = scrollView.frame.size.height - scrollView.contentInset.top - scrollView.contentInset.bottom;
     
     CGRect selfFrame = self.frame;
     selfFrame.origin.y = MAX(contentHeight, scrollHeight);
@@ -135,16 +137,18 @@
     if ([@"contentSize" isEqualToString:keyPath]) {
         [self adjustFrameWithContentSize];
     } else if ([@"contentOffset" isEqualToString:keyPath]) {
-        if (self.scrollView.contentOffset.y <= 0) {
+        UIScrollView *scrollView = (UIScrollView *)self.superview;
+        
+        if (scrollView.contentOffset.y <= 0) {
             return;
         }
         
-        if (self.scrollView.contentOffset.y+(self.scrollView.frame.size.height) > self.scrollView.contentSize.height+[DXRfreshFooter standTriggerHeight] + self.scrollView.contentInset.bottom && !self.refreshing) {
+        if (scrollView.contentOffset.y+(scrollView.frame.size.height) > scrollView.contentSize.height+[DXRfreshFooter standTriggerHeight] + scrollView.contentInset.bottom && !self.refreshing) {
             
             [self beginRefreshing];
             
             [UIView animateWithDuration:0.2 delay:0.01 options:UIViewAnimationOptionCurveEaseIn animations:^{
-                self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0.0f, self.scrollView.contentInset.bottom + [DXRfreshFooter standHeight], 0.0f);
+                scrollView.contentInset = UIEdgeInsetsMake(scrollView.contentInset.top, 0.0f, scrollView.contentInset.bottom + [DXRfreshFooter standHeight], 0.0f);
             } completion:^(BOOL finished) {
                 
             }];
@@ -161,6 +165,7 @@
 
 @property (nonatomic, strong) UIControl<DXRefreshView> *header;
 @property (nonatomic, strong) UIControl<DXRefreshView> *footer;
+@property (nonatomic, weak) id target;
 
 @end
 
@@ -168,6 +173,8 @@
 
 static char DXRefreshHeaderViewKey;
 static char DXRefreshFooterViewKey;
+static char DXTarget;
+
 
 - (void)setHeader:(UIView *)header {
     objc_setAssociatedObject(self, &DXRefreshHeaderViewKey, header, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -185,17 +192,33 @@ static char DXRefreshFooterViewKey;
     return objc_getAssociatedObject(self, &DXRefreshFooterViewKey);
 }
 
+- (void)setTarget:(id)target {
+//#warning It should not be retained here, because target retain self, self retain target now
+    objc_setAssociatedObject(self, &DXTarget, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (id)target {
+    return objc_getAssociatedObject(self, &DXTarget);
+}
+
 - (void)addHeaderWithTarget:(id)target action:(SEL)action
 {
     if (self.header) {
         return;
     }
     
+    self.target = target;
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
-    [refresh addTarget:target action:action forControlEvents:UIControlEventValueChanged];
-    [self addSubview:refresh];
     self.alwaysBounceVertical = YES;
     self.header = (UIControl<DXRefreshView> *)refresh;
+    [self addSubview:self.header];
+    [self.header addTarget:self.target action:action forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)removeHeader
+{
+    [self.header removeFromSuperview];
+    self.header = nil;
 }
 
 static CGFloat const _kRefreshControlHeight = -64.0;

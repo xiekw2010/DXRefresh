@@ -11,6 +11,8 @@
 @interface UIScrollView (DXRefresh)
 
 - (void)addHeaderWithTarget:(id)target action:(SEL)action;
+- (void)removeHeader;
+
 - (void)headerBeginRefreshing;
 - (void)headerEndRefreshing;
 - (BOOL)isHeaderRefreshing;

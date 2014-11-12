@@ -36,6 +36,19 @@ Simple style and Simple way to integrate pull down refresh and pull up fresh
     	[self refreshHeader];
 	}
 	
+###TO DO
+
+	- (void)setTarget:(id)target {
+	//#warning It should not be retained here, because target retain self, self retain target now
+	    objc_setAssociatedObject(self, &DXTarget, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	}
+	
+	- (id)target {
+	    return objc_getAssociatedObject(self, &DXTarget);
+	}
+
+if we don't do this, if you push view controller very quickly it will cause the dealloc target call the method, then crash!
+	
 ###Demo
 
 ![gif](demo.gif)
