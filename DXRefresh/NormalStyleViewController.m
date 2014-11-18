@@ -8,6 +8,7 @@
 
 #import "NormalStyleViewController.h"
 #import "UIScrollView+DXRefresh.h"
+#import "GifStyleViewController.h"
 
 @interface NormalStyleViewController ()<UITableViewDataSource, UITableViewDelegate>
 {
@@ -33,8 +34,8 @@
     [self.view addSubview:self.tableView];
     self.images = [NSMutableArray array];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Header" style:UIBarButtonItemStylePlain target:self action:@selector(handUpdateH)];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Footer" style:UIBarButtonItemStylePlain target:self action:@selector(handUpdateF)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Header" style:UIBarButtonItemStylePlain target:self action:@selector(handUpdateH)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Footer" style:UIBarButtonItemStylePlain target:self action:@selector(handUpdateF)];
 
     
     [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader)];
@@ -106,6 +107,14 @@
         cell.backgroundColor = [UIColor cyanColor];
     }
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    GifStyleViewController *gift = [GifStyleViewController new];
+    gift.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:gift animated:YES];
 }
 
 @end

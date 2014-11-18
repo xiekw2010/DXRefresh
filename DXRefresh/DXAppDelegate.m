@@ -21,6 +21,7 @@
     NormalStyleViewController *normal = [NormalStyleViewController new];
     normal.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemBookmarks tag:0];
     GifStyleViewController *gif = [GifStyleViewController new];
+        
     gif.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemFavorites tag:1];
     tab.viewControllers = @[[[UINavigationController alloc] initWithRootViewController:normal], [[UINavigationController alloc] initWithRootViewController:gif]];
     self.window.rootViewController = tab;

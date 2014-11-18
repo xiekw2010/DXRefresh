@@ -8,6 +8,7 @@
 
 #import "GifStyleViewController.h"
 #import "UIScrollView+DXRefresh.h"
+#import "NormalStyleViewController.h"
 
 @interface GifStyleViewController ()<UICollectionViewDataSource, UICollectionViewDelegate>
 
@@ -97,6 +98,14 @@
     UICollectionViewCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"cellID" forIndexPath:indexPath];
     cell.backgroundColor = [UIColor purpleColor];
     return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    [collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    NormalStyleViewController *normal = [NormalStyleViewController new];
+    normal.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:normal animated:YES];
 }
 
 @end
