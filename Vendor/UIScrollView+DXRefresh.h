@@ -28,4 +28,9 @@
 // Some times there are no data available, then we remove it.
 - (void)removeFooter;
 
+
+- (void)addHeaderWithBlock:(dispatch_block_t)block;
+- (void)addFooterWithBlock:(dispatch_block_t)block;
+
+
 @end

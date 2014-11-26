@@ -1,15 +1,17 @@
 DXRefresh
 =========
 
-Simple style and Simple way to integrate pull down refresh and pull up fresh
+Simple style and Simple way to integrate pull down refreshing and drap up refreshing
 
 ###Features
 
 + Simple style, just UIRefreshControl and UIActivityIndicatorView.
 + Simple Drop in, just import "UIScrollView+DXRefresh.h".
-+ Simple and easy api to combine the code, no need to set something `scrollViewDidScroll` or others.
++ Simple api to combine the code, no need to set something `scrollViewDidScroll` or others.
 
 ###how to use
+	
+eg1:
 	
     [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader)];
     [self.tableView addFooterWithTarget:self action:@selector(refreshFooter)];
@@ -36,18 +38,16 @@ Simple style and Simple way to integrate pull down refresh and pull up fresh
     	[self refreshHeader];
 	}
 	
-###TO DO
-
-	- (void)setTarget:(id)target {
-	//#warning It should not be retained here, because target retain self, self retain target now
-	    objc_setAssociatedObject(self, &DXTarget, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-	}
+eg2:
 	
-	- (id)target {
-	    return objc_getAssociatedObject(self, &DXTarget);
-	}
+	[self.collectionView addHeaderWithBlock:^{
+        [weakSelf refreshHeader];
+    }];
+    
+    [self.collectionView addFooterWithBlock:^{
+        [weakSelf refreshFooter];
+    }];
 
-if we don't do this, if you push view controller very quickly it will cause the dealloc target call the method, then crash!
 	
 ###Demo
 

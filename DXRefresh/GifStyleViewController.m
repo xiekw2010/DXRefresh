@@ -45,9 +45,15 @@
     
     [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cellID"];
     
-    [self.collectionView addHeaderWithTarget:self action:@selector(refreshHeader)];
-    [self.collectionView addFooterWithTarget:self action:@selector(refreshFooter)];
     
+    __weak typeof(self)weakSelf = self;
+    [self.collectionView addHeaderWithBlock:^{
+        [weakSelf refreshHeader];
+    }];
+    
+    [self.collectionView addFooterWithBlock:^{
+        [weakSelf refreshFooter];
+    }];
 
 }
 

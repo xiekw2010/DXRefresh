@@ -103,7 +103,6 @@
     return self;
 }
 
-
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
     [super willMoveToSuperview:newSuperview];
@@ -169,7 +168,6 @@
 
 @property (nonatomic, strong) UIControl<DXRefreshView> *header;
 @property (nonatomic, strong) UIControl<DXRefreshView> *footer;
-@property (nonatomic, weak) id target;
 
 @end
 
@@ -177,8 +175,8 @@
 
 static char DXRefreshHeaderViewKey;
 static char DXRefreshFooterViewKey;
-static char DXTarget;
-
+static char DXHeaderBlockKey;
+static char DXFooterBlockKey;
 
 - (void)setHeader:(UIView *)header {
     objc_setAssociatedObject(self, &DXRefreshHeaderViewKey, header, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -196,13 +194,24 @@ static char DXTarget;
     return objc_getAssociatedObject(self, &DXRefreshFooterViewKey);
 }
 
-- (void)setTarget:(id)target {
-//#warning It should not be retained here, because target retain self, self retain target now
-    objc_setAssociatedObject(self, &DXTarget, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setHeaderBlock:(dispatch_block_t)block
+{
+    objc_setAssociatedObject(self, &DXHeaderBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (id)target {
-    return objc_getAssociatedObject(self, &DXTarget);
+- (dispatch_block_t)headerBlock
+{
+    return objc_getAssociatedObject(self, &DXHeaderBlockKey);
+}
+
+- (void)setFooterBlock:(dispatch_block_t)block
+{
+    objc_setAssociatedObject(self, &DXFooterBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (dispatch_block_t)footerBlock
+{
+    return objc_getAssociatedObject(self, &DXFooterBlockKey);
 }
 
 - (void)addHeaderWithTarget:(id)target action:(SEL)action
@@ -211,12 +220,11 @@ static char DXTarget;
         return;
     }
     
-    self.target = target;
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
     self.alwaysBounceVertical = YES;
     self.header = (UIControl<DXRefreshView> *)refresh;
     [self addSubview:self.header];
-    [self.header addTarget:self.target action:action forControlEvents:UIControlEventValueChanged];
+    [self.header addTarget:target action:action forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)removeHeader
@@ -299,6 +307,51 @@ static CGFloat const _kRefreshControlHeight = -64.0;
 {
     [self.footer removeFromSuperview];
     self.footer = nil;
+}
+
+- (void)addHeaderWithBlock:(dispatch_block_t)block
+{
+    if (block) {
+        self.headerBlock = block;
+    }
+    
+    if (self.header) {
+        return;
+    }
+    
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    self.alwaysBounceVertical = YES;
+    self.header = (UIControl<DXRefreshView> *)refresh;
+    [self addSubview:self.header];
+    [self.header addTarget:self action:@selector(_headerAction) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)_headerAction
+{
+    if (self.headerBlock) {
+        self.headerBlock();
+    }
+}
+
+- (void)addFooterWithBlock:(dispatch_block_t)block
+{
+    if (block) {
+        self.footerBlock = block;
+    }
+    
+    if (self.footer) {
+        return;
+    }
+    self.footer = [[DXRfreshFooter alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), [DXRfreshFooter standHeight])];
+    [self.footer addTarget:self action:@selector(_footerAction) forControlEvents:UIControlEventValueChanged];
+    [self addSubview:self.footer];
+}
+
+- (void)_footerAction
+{
+    if (self.footerBlock) {
+        self.footerBlock();
+    }
 }
 
 @end
