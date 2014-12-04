@@ -34,12 +34,10 @@
     [self.view addSubview:self.tableView];
     self.images = [NSMutableArray array];
     
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Header" style:UIBarButtonItemStylePlain target:self action:@selector(handUpdateH)];
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Footer" style:UIBarButtonItemStylePlain target:self action:@selector(handUpdateF)];
 
     
-    [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader)];
-    [self.tableView addFooterWithTarget:self action:@selector(refreshFooter)];
+    [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader) withIndicatorColor:[UIColor blueColor]];
+    [self.tableView addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:[UIColor orangeColor]];
     [self updateSomeThing];
     
 }

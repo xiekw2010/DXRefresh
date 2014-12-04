@@ -24,6 +24,9 @@
 @end
 
 @interface DXRfreshFooter : UIControl<DXRefreshView>
+{
+    CGFloat _cutBottomOffset;
+}
 
 @property (nonatomic, strong) UIActivityIndicatorView *acv;
 @property (nonatomic, assign) BOOL refreshing;
@@ -82,7 +85,9 @@
         [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
             if (wself.superview) {
                 UIScrollView *scrollView = (UIScrollView *)wself.superview;
-                scrollView.contentInset = UIEdgeInsetsMake(scrollView.contentInset.top, 0.0f, MAX(0, scrollView.contentInset.bottom - [DXRfreshFooter standHeight]), 0.0f);
+                NSLog(@"_cut bottom offset is %f", _cutBottomOffset);
+                scrollView.contentInset = UIEdgeInsetsMake(scrollView.contentInset.top, 0.0f, MAX(0, scrollView.contentInset.bottom - _cutBottomOffset), 0.0f);
+                _cutBottomOffset = 0.0;
             }
         } completion:^(BOOL finished) {
         }];
@@ -151,7 +156,8 @@
             [self beginRefreshing];
             
             [UIView animateWithDuration:0.2 delay:0.01 options:UIViewAnimationOptionCurveEaseIn animations:^{
-                scrollView.contentInset = UIEdgeInsetsMake(scrollView.contentInset.top, 0.0f, scrollView.contentInset.bottom + [DXRfreshFooter standHeight], 0.0f);
+                _cutBottomOffset = [DXRfreshFooter standHeight];
+                scrollView.contentInset = UIEdgeInsetsMake(scrollView.contentInset.top, 0.0f, scrollView.contentInset.bottom + _cutBottomOffset, 0.0f);
             } completion:^(BOOL finished) {
                 
             }];
@@ -167,7 +173,7 @@
 @interface UIScrollView ()
 
 @property (nonatomic, strong) UIControl<DXRefreshView> *header;
-@property (nonatomic, strong) UIControl<DXRefreshView> *footer;
+@property (nonatomic, strong) DXRfreshFooter *footer;
 
 @end
 
@@ -214,17 +220,25 @@ static char DXFooterBlockKey;
     return objc_getAssociatedObject(self, &DXFooterBlockKey);
 }
 
-- (void)addHeaderWithTarget:(id)target action:(SEL)action
+- (void)addHeaderWithTarget:(id)target action:(SEL)action withIndicatorColor:(UIColor *)color
 {
     if (self.header) {
         return;
     }
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    if (color) {
+        refresh.tintColor = color;
+    }
     self.alwaysBounceVertical = YES;
     self.header = (UIControl<DXRefreshView> *)refresh;
     [self addSubview:self.header];
     [self.header addTarget:target action:action forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)addHeaderWithTarget:(id)target action:(SEL)action
+{
+    [self addHeaderWithTarget:target action:action withIndicatorColor:nil];
 }
 
 - (void)removeHeader
@@ -262,14 +276,22 @@ static CGFloat const _kRefreshControlHeight = -64.0;
     return NO;
 }
 
-- (void)addFooterWithTarget:(id)target action:(SEL)action
+- (void)addFooterWithTarget:(id)target action:(SEL)action withIndicatorColor:(UIColor *)color
 {
     if (self.footer) {
         return;
     }
     self.footer = [[DXRfreshFooter alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), [DXRfreshFooter standHeight])];
+    if (color) {
+        self.footer.acv.color = color;
+    }
     [self.footer addTarget:target action:action forControlEvents:UIControlEventValueChanged];
     [self addSubview:self.footer];
+}
+
+- (void)addFooterWithTarget:(id)target action:(SEL)action
+{
+    [self addFooterWithTarget:target action:action withIndicatorColor:nil];
 }
 
 - (void)footerBeginRefreshing
@@ -309,7 +331,7 @@ static CGFloat const _kRefreshControlHeight = -64.0;
     self.footer = nil;
 }
 
-- (void)addHeaderWithBlock:(dispatch_block_t)block
+- (void)addHeaderWithBlock:(dispatch_block_t)block withIndicatorColor:(UIColor *)color
 {
     if (block) {
         self.headerBlock = block;
@@ -320,10 +342,18 @@ static CGFloat const _kRefreshControlHeight = -64.0;
     }
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    if (color) {
+        refresh.tintColor = color;
+    }
     self.alwaysBounceVertical = YES;
     self.header = (UIControl<DXRefreshView> *)refresh;
     [self addSubview:self.header];
     [self.header addTarget:self action:@selector(_headerAction) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)addHeaderWithBlock:(dispatch_block_t)block
+{
+    [self addHeaderWithBlock:block withIndicatorColor:nil];
 }
 
 - (void)_headerAction
@@ -333,7 +363,7 @@ static CGFloat const _kRefreshControlHeight = -64.0;
     }
 }
 
-- (void)addFooterWithBlock:(dispatch_block_t)block
+- (void)addFooterWithBlock:(dispatch_block_t)block withIndicatorColor:(UIColor *)color
 {
     if (block) {
         self.footerBlock = block;
@@ -343,8 +373,16 @@ static CGFloat const _kRefreshControlHeight = -64.0;
         return;
     }
     self.footer = [[DXRfreshFooter alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), [DXRfreshFooter standHeight])];
+    if (color) {
+        self.footer.acv.color = color;
+    }
     [self.footer addTarget:self action:@selector(_footerAction) forControlEvents:UIControlEventValueChanged];
     [self addSubview:self.footer];
+}
+
+- (void)addFooterWithBlock:(dispatch_block_t)block
+{
+    [self addFooterWithBlock:block withIndicatorColor:nil];
 }
 
 - (void)_footerAction
