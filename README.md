@@ -3,6 +3,10 @@ DXRefresh
 
 Simple style and Simple way to integrate pull down refreshing and drap up refreshing
 
+###Demo
+
+![gif](demo.gif)
+
 ###Features
 
 + Simple style, just UIRefreshControl and UIActivityIndicatorView.
@@ -48,8 +52,47 @@ eg2:
         [weakSelf refreshFooter];
     }];
 
-	
-###Demo
+###Note
 
-![gif](demo.gif)
+iOS 7 refreshControl has some bugs. Here is the solution for two situations.
+
+The bug:
+
+First, you pull half of it(Header).
+
+Second, switch to other tabs or press the iPhone home.
+
+Finaly, back to the refresh screen. You will see the refreshControl is buggy apperance.
+
+The solution:
+
+1. for switch tab situation
+	
+		// your ViewController which has add header
+		-(void)viewDidAppear:(BOOL)animated
+		{
+		   [super viewDidAppear:animated];
+		   [self.tableView relaxHeader];
+		}
+
+2. for back screen and enterforeground
+	
+		// your ViewController which has add header
+		- (void)viewDidLoad
+		 {
+		    ...
+		 
+		    // end of this
+		    [[NSNotificationCenter defaultCenter] addObserver:self.tableView selector:@selector(relaxHeader) name:UIApplicationDidBecomeActiveNotification object:nil];
+		 }
+		 
+		 - (void)dealloc
+		 {
+		     [[NSNotificationCenter defaultCenter] removeObserver:self.tableView name:UIApplicationDidBecomeActiveNotification object:nil];
+		 }
+
+
+It's odd, but here is the tempory solution. 
+
+
 

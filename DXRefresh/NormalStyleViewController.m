@@ -20,9 +20,21 @@
 
 @implementation NormalStyleViewController
 
+- (void)dealloc
+{
+    [self.tableView removeHeader];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.tableView relaxHeader];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     
     self.title = @"TableView";
 //    self.edgesForExtendedLayout = UIRectEdgeNone;
@@ -35,10 +47,11 @@
     self.images = [NSMutableArray array];
     
 
-    
     [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader) withIndicatorColor:[UIColor blueColor]];
     [self.tableView addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:[UIColor orangeColor]];
     [self updateSomeThing];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self.tableView selector:@selector(relaxHeader) name:UIApplicationDidBecomeActiveNotification object:nil];
     
 }
 

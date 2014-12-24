@@ -22,6 +22,39 @@
 
 - (BOOL)isHeaderRefreshing;
 
+
+/**
+ *  iOS 7 RefreshControl have some bugs, this is a solution for the situation when pull half of it, and then switch tabs or press iPhone home button and then back to screen
+ 
+    You should use it in these two situation:
+ 
+ 1.
+ - (void)viewDidAppear:(BOOL)animated
+ {
+     [super viewDidAppear:animated];
+     [self.tableView relaxHeader];
+ }
+ 
+ 2.
+ - (void)viewDidLoad
+ {
+    ...
+ 
+    // end of this
+    [[NSNotificationCenter defaultCenter] addObserver:self.tableView selector:@selector(relaxHeader) name:UIApplicationDidBecomeActiveNotification object:nil];
+ }
+ 
+ - (void)dealloc
+ {
+     [[NSNotificationCenter defaultCenter] removeObserver:self.tableView name:UIApplicationDidBecomeActiveNotification object:nil];
+ }
+ 
+ You must imp these two methods
+ 
+ */
+- (void)relaxHeader;
+
+
 - (void)removeHeader;
 
 - (void)addFooterWithTarget:(id)target action:(SEL)action withIndicatorColor:(UIColor *)color;

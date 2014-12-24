@@ -241,8 +241,20 @@ static char DXFooterBlockKey;
     [self addHeaderWithTarget:target action:action withIndicatorColor:nil];
 }
 
+- (void)relaxHeader
+{
+    if ([self.header isKindOfClass:[UIRefreshControl class]]) {
+        UIRefreshControl *refresh = (UIRefreshControl *)self.header;
+        if (refresh.isRefreshing) {
+        }else {
+            [refresh endRefreshing];
+        }
+    }
+}
+
 - (void)removeHeader
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [self.header removeFromSuperview];
     self.header = nil;
 }
