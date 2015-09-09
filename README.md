@@ -1,7 +1,10 @@
-DXRefresh
-=========
+# DXRefresh
 
-Simple style and Simple way to integrate pull down refreshing and drap up refreshing
+[![Version](https://img.shields.io/cocoapods/v/DXRefresh.svg?style=flat)](http://cocoapods.org/pods/DXRefresh)
+[![License](https://img.shields.io/cocoapods/l/DXRefresh.svg?style=flat)](http://cocoapods.org/pods/DXRefresh)
+[![Platform](https://img.shields.io/cocoapods/p/DXRefresh.svg?style=flat)](http://cocoapods.org/pods/DXRefresh)
+
+Clean style and Simple way to integrate pull down refreshing and drap up refreshing
 
 ###Demo
 

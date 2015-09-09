@@ -45,7 +45,6 @@
     self.tableView.delegate = self;
     [self.view addSubview:self.tableView];
     self.images = [NSMutableArray array];
-    
 
     [self.tableView addHeaderWithTarget:self action:@selector(refreshHeader) withIndicatorColor:[UIColor blueColor]];
     [self.tableView addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:[UIColor orangeColor]];

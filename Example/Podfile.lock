@@ -1,0 +1,14 @@
+PODS:
+  - DXRefresh (0.1.0)
+
+DEPENDENCIES:
+  - DXRefresh (from `../`)
+
+EXTERNAL SOURCES:
+  DXRefresh:
+    :path: ../
+
+SPEC CHECKSUMS:
+  DXRefresh: f973a9ac5034918f8e2e06b7c7b8ca7b04868e1c
+
+COCOAPODS: 0.35.0
