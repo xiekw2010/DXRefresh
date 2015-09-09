@@ -16,14 +16,13 @@ Pod::Spec.new do |s|
 #   * Try to keep it short, snappy and to the point.
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!  
-  s.description      = <<-DESC
-                       DESC
+  s.description      = "Simple way, clean style to access PullToRefresh and Load more on scrollView, use it!"
 
   s.homepage         = "https://github.com/xiekw2010/DXRefresh"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "xiekw" => "xiekw2010@gmail.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/DXRefresh.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/xiekw2010/DXRefresh.git", :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.platform     = :ios, '6.0'
